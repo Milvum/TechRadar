@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Tech Radar
-Version: 1.0.0
+Version: 1.1.0
 Plugin URI: t.b.t.
 Author: Milvum, Blue Harvest
 Author URI: https://milvum.com
@@ -72,12 +72,15 @@ function tech_radar_do_page()
   $items = get_option('tech_radar_items');
   usort($items, 'compare_name');
   foreach($items as $item) {
+    $name = $item['name'];
+    $x = $item['x'];
+    $y = $item['y'];
     ?>
-    <div class='tr'>
-      <span class='td'><?php echo $item['name']; ?></span>
-      <span class='td'><?php echo $item['x']; ?></span>
-      <span class='td'><?php echo $item['y']; ?></span>
-      <button class='remove-button' data-name='<?php echo $item['name']?>'>X</button>
+    <div class='tr' data-name='<?php echo $name; ?>' data-x='<?php echo $x; ?>' data-y='<?php echo $y; ?>'>
+      <span class='td'><?php echo $name; ?></span>
+      <span class='td'><input class='coordinate' type="number" data-dir='x' value=<?php echo $x; ?>></input></span>
+      <span class='td'><input class='coordinate' type="number" data-dir='y' value=<?php echo $y; ?>></input></span>
+      <button class='remove-button' data-name='<?php echo $name; ?>'>X</button>
     </div>
     <?php
   }
@@ -85,8 +88,8 @@ function tech_radar_do_page()
   <div class='tr spacing'></div>
     <form class="tr" method="post" action="add_item">
       <span class="td"><input type="text" autocomplete="off" name="name" /></span>
-      <span class="td"><input type="text" autocomplete="off" name="x" /></span>
-      <span class="td"><input type="text" autocomplete="off" name="y" /></span>
+      <span class="td"><input type="number" autocomplete="off" name="x" /></span>
+      <span class="td"><input type="number" autocomplete="off" name="y" /></span>
       <button class='add-button'>+</button>
     </form>
   </div>
@@ -172,7 +175,6 @@ function techradar_display()
     $out .= addLabels($sectors);
     $out .= '<div class="mask"><div class="stage">';
     $out .= addQuadrants($sectors);
-    // TODO: Allow users to define circle titles.
     $out .= '<div class="circle circle-inner"><div class="legend"></div></div>';
     $out .= '<div class="circle circle-outer"><div class="legend"></div></div>';
     $out .= '<div class="line-x"></div>';
@@ -260,6 +262,54 @@ function add_item_javascript() {
       'name': document.forms[0].name.value,
       'x': document.forms[0].x.value,
       'y': document.forms[0].y.value,
+		};
+
+		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
+		jQuery.post(ajaxurl, data, function(response) {
+      console.log(response);
+      // This is rather data inefficient, but suffices for now.
+      window.location.reload();
+		});
+	});
+  </script> <?php
+}
+  
+add_action( 'wp_ajax_update_item', 'update_item' );
+
+function update_item() {
+	global $wpdb;
+  $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
+  $x = filter_var($_POST['x'], FILTER_SANITIZE_NUMBER_FLOAT);
+  $y = filter_var($_POST['y'], FILTER_SANITIZE_NUMBER_FLOAT);
+  $items = get_option('tech_radar_items');
+  if (!$items) {
+    return;
+  } 
+  $key = array_search($name, array_column($items, 'name'));
+  $items[$key] = array("name" => $name, "x" => $x, "y" => $y);
+  update_option('tech_radar_items', $items, 'no');
+  
+  echo 'Updated '.$name;
+  
+	wp_die(); // this is required to terminate immediately and return a proper response
+}
+
+add_action( 'admin_footer', 'update_item_javascript' );
+
+function update_item_javascript() {
+  
+  ?>
+  <script type="text/javascript" >
+  jQuery(document).on('input', 'input.coordinate', function($) {
+    var data = jQuery(this).parent().parent().data();
+    var value = jQuery(this).val();
+    var dir = jQuery(this).data('dir');
+    data[dir] = parseInt(value);
+		var data = {
+			'action': 'update_item',
+      'name': data['name'],
+      'x': data['x'],
+      'y': data['y'],
 		};
 
 		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
