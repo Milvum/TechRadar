@@ -1,0 +1,364 @@
+.TechRadar.is-open.is-frameworks .Item.is-frameworks,
+.TechRadar.is-open.is-languages .Item.is-languages,
+.TechRadar.is-open.is-platforms .Item.is-platforms,
+.TechRadar.is-open.is-tools .Item.is-tools,
+.TechRadar .Item:hover {
+  z-index: 5;
+}
+.TechRadar.is-open.is-frameworks .Item.is-frameworks .target,
+.TechRadar.is-open.is-languages .Item.is-languages .target,
+.TechRadar.is-open.is-platforms .Item.is-platforms .target,
+.TechRadar.is-open.is-tools .Item.is-tools .target,
+.TechRadar .Item:hover .target {
+  transform: translate(50%, -15px);
+}
+.TechRadar.is-open.is-frameworks .Item.is-frameworks .name,
+.TechRadar.is-open.is-languages .Item.is-languages .name,
+.TechRadar.is-open.is-platforms .Item.is-platforms .name,
+.TechRadar.is-open.is-tools .Item.is-tools .name,
+.TechRadar .Item:hover .name {
+  border-radius: 20px;
+  max-width: 200px;
+  max-height: 30px;
+  box-shadow: 2px 2px 6px 0 rgba(0, 0, 0, 0.4);
+}
+.TechRadar.is-open.is-frameworks .Item.is-frameworks .name span,
+.TechRadar.is-open.is-languages .Item.is-languages .name span,
+.TechRadar.is-open.is-platforms .Item.is-platforms .name span,
+.TechRadar.is-open.is-tools .Item.is-tools .name span,
+.TechRadar .Item:hover .name span {
+  opacity: 1;
+}
+.TechRadar.is-open .Item {
+  transition-delay: 0s !important;
+}
+.TechRadar.is-open .Item * {
+  transition-delay: 0.5s !important;
+}
+.TechRadar {
+  transform: translateZ(0);
+}
+.TechRadar,
+.TechRadar * {
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  perspective: 1000;
+}
+.TechRadar.is-frameworks .stage {
+  transform: translate(50%, 50%) scale(2);
+}
+.TechRadar.is-tools .stage {
+  transform: translate(-50%, -50%) scale(2);
+}
+.TechRadar.is-languages .stage {
+  transform: translate(-50%, 50%) scale(2);
+}
+.TechRadar.is-platforms .stage {
+  transform: translate(50%, -50%) scale(2);
+}
+.TechRadar.is-open .Item {
+  transform: scale(0.5);
+}
+.TechRadar .labels {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  width: max-content;
+}
+.TechRadar .labels a {
+  white-space: nowrap;
+  transition: 0.3s;
+  display: block;
+  padding: 0.6em 1em;
+  font-size: 16px;
+  margin: 15px;
+  position: relative;
+  text-decoration: none;
+}
+@media (max-width: 767px) {
+  .TechRadar .labels a {
+    font-size: 14px;
+    margin: 10px;
+  }
+}
+.TechRadar .labels a span {
+  cursor: pointer;
+  position: relative;
+  z-index: 2;
+  color: #fff;
+}
+
+.TechRadar .labels a:after {
+  cursor: pointer;
+  z-index: 1;
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  border-radius: 4px;
+  opacity: 0.8;
+}
+.TechRadar .labels .label-frameworks:after {
+  background: #fdae18;
+}
+.TechRadar .labels .label-languages:after {
+  background: #059296;
+}
+.TechRadar .labels .label-tools:after {
+  background: #ef0018;
+}
+.TechRadar .labels .label-platforms:after {
+  background: #7cd200;
+}
+.TechRadar .quadrant-title {
+  font-size: 18px;
+  position: absolute;
+}
+@media (max-width: 767px) {
+  .TechRadar .quadrant-title {
+    font-size: 12px;
+  }
+}
+.TechRadar .quadrant-title span {
+  left: 0;
+  top: 0;
+  position: absolute;
+  width: max-content;
+}
+.TechRadar .quadrant-frameworks .quadrant-title {
+  right: 80%;
+  bottom: 80%;
+}
+.TechRadar .quadrant-frameworks .quadrant-title span {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.TechRadar .quadrant-languages .quadrant-title {
+  left: 80%;
+  bottom: 80%;
+}
+.TechRadar .quadrant-languages .quadrant-title span {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.TechRadar .quadrant-tools .quadrant-title {
+  left: 80%;
+  top: 80%;
+}
+.TechRadar .quadrant-tools .quadrant-title span {
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.TechRadar .quadrant-platforms .quadrant-title {
+  right: 80%;
+  top: 80%;
+}
+.TechRadar .quadrant-platforms .quadrant-title span {
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.TechRadar .mask {
+  width: 600px;
+  height: 600px;
+  position: relative;
+  margin: auto;
+  overflow: hidden;
+  transition: 0.4s;
+}
+@media (max-width: 767px) {
+  .TechRadar .mask {
+    width: 100%;
+    padding-bottom: 100%;
+    height: auto;
+  }
+}
+.TechRadar .stage {
+  transform: translateZ(0);
+  transition: 0.3s;
+}
+.TechRadar .circle,
+.TechRadar .stage {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.TechRadar .circle {
+  z-index: 2;
+  border-radius: 50%;
+  overflow: hidden;
+}
+.TechRadar .circle::after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  background: #000;
+  opacity: 0.05;
+}
+.TechRadar .circle .legend {
+  pointer-events: none;
+  position: absolute;
+  font-size: 14px;
+  top: 18%;
+  left: 18%;
+  transform-origin: center;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+.TechRadar .circle-inner {
+  width: 70%;
+  height: 70%;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.TechRadar .line-x,
+.TechRadar .line-y {
+  opacity: 0.2;
+}
+.TechRadar .line-x {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 1px;
+  background: #000;
+}
+.TechRadar .line-y {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  left: 50%;
+  width: 1px;
+  background: #000;
+}
+.TechRadar .quadrant {
+  width: 50%;
+  height: 50%;
+  position: absolute;
+  overflow: hidden;
+  z-index: 1;
+}
+.TechRadar .quadrant .border {
+  display: block;
+  position: absolute;
+  overflow: hidden;
+  width: 200%;
+  height: 200%;
+  border: 10px solid #fdae18;
+  border-radius: 50%;
+  box-sizing: border-box;
+  opacity: 0.9;
+}
+@media (max-width: 767px) {
+  .TechRadar .quadrant .border {
+    border-width: 5px;
+  }
+}
+.TechRadar .quadrant-languages {
+  right: 0;
+  top: 0;
+}
+.TechRadar .quadrant-languages .border {
+  right: 0;
+  top: 0;
+  border-color: #059296;
+}
+.TechRadar .quadrant-tools {
+  right: 0;
+  bottom: 0;
+}
+.TechRadar .quadrant-tools .border {
+  right: 0;
+  bottom: 0;
+  border-color: #ef0018;
+}
+.TechRadar .quadrant-platforms {
+  left: 0;
+  bottom: 0;
+}
+.TechRadar .quadrant-platforms .border {
+  left: 0;
+  bottom: 0;
+  border-color: #7cd200;
+}
+.TechRadar .items {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+.TechRadar .Item {
+  cursor: pointer;
+  position: absolute;
+  z-index: 4;
+  width: 1px;
+  height: 1px;
+  transition: 0.3s;
+}
+.TechRadar .Item .target {
+  transition: 0.3s;
+}
+.TechRadar .Item .hit {
+  display: block;
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  left: 50%;
+  top: 50%;
+  border-radius: 30%;
+  transform: translate(-50%, -50%);
+}
+.TechRadar .Item.is-tools .name {
+  background: #ef0018;
+}
+.TechRadar .Item.is-frameworks .name {
+  background: #fdae18;
+}
+.TechRadar .Item.is-platforms .name {
+  background: #7cd200;
+}
+.TechRadar .Item.is-languages .name {
+  background: #059296;
+}
+.TechRadar .Item .name {
+  pointer-events: none;
+  font-size: 16px;
+  position: absolute;
+  left: 50%;
+  white-space: nowrap;
+  top: 50%;
+  color: #fff;
+  transition: 0.3s;
+  transform: translate(-50%, -50%);
+  max-width: 20px;
+  max-height: 20px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 0 0 0 transparent;
+}
+@media (max-width: 767px) {
+  .TechRadar .Item .name {
+    max-width: 15px;
+    max-height: 15px;
+    font-size: 12px;
+  }
+}
+.TechRadar .Item .name span {
+  display: block;
+  opacity: 0;
+  transition: 0.3s;
+  padding: 0.1em 0.7em;
+  line-height: 1.8;
+}
+@media (max-width: 767px) {
+  .TechRadar .Item .name span {
+    padding: 0.1em 0.5em;
+  }
+}

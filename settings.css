@@ -1,0 +1,20 @@
+div.table {
+  display: table;
+  width: max-content;
+  background: lightyellow;
+}
+form.tr,
+div.tr {
+  display: table-row;
+}
+div.header {
+  background: black;
+  color: white;
+}
+span.td {
+  display: table-cell;
+  border: 1px solid lightgray;
+}
+div.tr.spacing {
+  height: 18px;
+}
