@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Tech Radar
-Version: 1.1.0
+Version: 1.1.1
 Plugin URI: t.b.t.
 Author: Milvum, Blue Harvest
 Author URI: https://milvum.com
@@ -65,12 +65,12 @@ function tech_radar_do_page()
         <span/>
       </div>
   <?php
-  function compare_name($a, $b)
+  function tech_radar_compare_name($a, $b)
   {
     return strnatcmp($a['name'], $b['name']);
   }
   $items = get_option('tech_radar_items');
-  usort($items, 'compare_name');
+  usort($items, 'tech_radar_compare_name');
   foreach($items as $item) {
     $name = $item['name'];
     $x = $item['x'];
@@ -86,7 +86,7 @@ function tech_radar_do_page()
   }
   ?>
   <div class='tr spacing'></div>
-    <form class="tr" method="post" action="add_item">
+    <form class="tr" method="post" action="tech_radar_add_item">
       <span class="td"><input type="text" autocomplete="off" name="name" /></span>
       <span class="td"><input type="number" autocomplete="off" name="x" /></span>
       <span class="td"><input type="number" autocomplete="off" name="y" /></span>
@@ -104,12 +104,11 @@ function tech_radar_do_page()
 add_action('init', 'techradar_scripts');
 
 // Helper function to draw the labels.
-function addLabels($sectors) {
+function tech_radar_add_labels($sectors) {
   $out = '<div class="labels embed-title">';
   foreach ($sectors as $value) {
     $title = strtoupper($value);
     $out .= "<a class='label-$value' onclick=\"select('$value');\">
-      <i class='far fa-circle'></i>
       <span>$title</span>
     </a>";
   }
@@ -118,7 +117,7 @@ function addLabels($sectors) {
 }
 
 // Helper function to draw the different quadrants of the radar.
-function addQuadrants($sectors) {
+function tech_radar_add_quadrants($sectors) {
   $out = '';
   foreach ($sectors as $value) {
     $title = strtoupper($value);
@@ -133,14 +132,14 @@ function addQuadrants($sectors) {
   return $out;
 }
 
-function getSector($sectors, $x, $y) {
+function tech_radar_get_sector($sectors, $x, $y) {
   // Sectors are defined: [top-left, top-right, bot-left, bot-right];
   $var = ($x > 50) + 2*($y > 50);
   return $sectors[$var];
 }
 
 // Helper function to draw the items in the radar.
-function addItems($sectors) {
+function tech_radar_add_items($sectors) {
   $items = get_option('tech_radar_items');
 
   $out = '<div class="items">';
@@ -148,7 +147,7 @@ function addItems($sectors) {
     $x = $item['x'];
     $y = $item['y'];
     $name = $item['name'];
-    $sector = getSector($sectors, $x, $y);
+    $sector = tech_radar_get_sector($sectors, $x, $y);
     $out .= "<div class='Item is-$sector' style='left: $x%; top: $y%'>
           <div class='hit'></div>
           <div class='target'>
@@ -172,23 +171,23 @@ function techradar_display()
     wp_enqueue_script('techradar-js', plugin_dir_url(__FILE__) . 'techradar.js');
 
     $out = '<div class="TechRadar" id="TechRadar">';
-    $out .= addLabels($sectors);
+    $out .= tech_radar_add_labels($sectors);
     $out .= '<div class="mask"><div class="stage">';
-    $out .= addQuadrants($sectors);
+    $out .= tech_radar_add_quadrants($sectors);
     $out .= '<div class="circle circle-inner"><div class="legend"></div></div>';
     $out .= '<div class="circle circle-outer"><div class="legend"></div></div>';
     $out .= '<div class="line-x"></div>';
     $out .= '<div class="line-y"></div>';
-    $out .= addItems($sectors);
+    $out .= tech_radar_add_items($sectors);
     $out .= '</div></div></div></div>';
   return $out;
 }
 
 add_shortcode('techradar', 'techradar_display');
   
-add_action( 'wp_ajax_remove_item', 'remove_item' );
+add_action( 'wp_ajax_tech_radar_remove_item', 'tech_radar_remove_item' );
 
-function remove_item() {
+function tech_radar_remove_item() {
 	global $wpdb;
   $name = $_POST['name'];
   
@@ -203,9 +202,9 @@ function remove_item() {
 	wp_die(); // this is required to terminate immediately and return a proper response
 }
 
-add_action( 'admin_footer', 'remove_item_javascript' );
+add_action( 'admin_footer', 'tech_radar_remove_item_javascript' );
 
-function remove_item_javascript() {
+function tech_radar_remove_item_javascript() {
   
   ?>
 	<script type="text/javascript" >
@@ -213,7 +212,7 @@ function remove_item_javascript() {
     
     var name = jQuery(this).data('name');
 		var data = {
-			'action': 'remove_item',
+			'action': 'tech_radar_remove_item',
 			'name': name,
 		};
 
@@ -227,9 +226,9 @@ function remove_item_javascript() {
   </script> <?php
 }
   
-add_action( 'wp_ajax_add_item', 'add_item' );
+add_action( 'wp_ajax_tech_radar_add_item', 'tech_radar_add_item' );
 
-function add_item() {
+function tech_radar_add_item() {
 	global $wpdb;
   $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
   $x = filter_var($_POST['x'], FILTER_SANITIZE_NUMBER_FLOAT);
@@ -249,16 +248,16 @@ function add_item() {
 	wp_die(); // this is required to terminate immediately and return a proper response
 }
 
-add_action( 'admin_footer', 'add_item_javascript' );
+add_action( 'admin_footer', 'tech_radar_add_item_javascript' );
 
-function add_item_javascript() {
+function tech_radar_add_item_javascript() {
   
   ?>
   <script type="text/javascript" >
   jQuery(document).on('click', 'button.add-button', function($) {
     event.preventDefault();
 		var data = {
-			'action': 'add_item',
+			'action': 'tech_radar_add_item',
       'name': document.forms[0].name.value,
       'x': document.forms[0].x.value,
       'y': document.forms[0].y.value,
@@ -274,9 +273,9 @@ function add_item_javascript() {
   </script> <?php
 }
   
-add_action( 'wp_ajax_update_item', 'update_item' );
+add_action( 'wp_ajax_tech_radar_update_item', 'tech_radar_update_item' );
 
-function update_item() {
+function tech_radar_update_item() {
 	global $wpdb;
   $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
   $x = filter_var($_POST['x'], FILTER_SANITIZE_NUMBER_FLOAT);
@@ -294,9 +293,9 @@ function update_item() {
 	wp_die(); // this is required to terminate immediately and return a proper response
 }
 
-add_action( 'admin_footer', 'update_item_javascript' );
+add_action( 'admin_footer', 'tech_radar_update_item_javascript' );
 
-function update_item_javascript() {
+function tech_radar_update_item_javascript() {
   
   ?>
   <script type="text/javascript" >
@@ -306,7 +305,7 @@ function update_item_javascript() {
     var dir = jQuery(this).data('dir');
     data[dir] = parseInt(value);
 		var data = {
-			'action': 'update_item',
+			'action': 'tech_radar_update_item',
       'name': data['name'],
       'x': data['x'],
       'y': data['y'],
