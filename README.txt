@@ -1,5 +1,5 @@
 Plugin Name: Tech Radar
-Version: 1.0.0
+Version: 1.1.3
 Author: Milvum, Blue Harvest
 Author URI: https://milvum.com
 Contributors: nwinnubst
@@ -7,7 +7,7 @@ Donate link: -
 Tags: radar, graph, simple, tech, technology, visuals, visual, tool
 Requires: 5.5.1
 Tested up to: 5.5.1
-Stable tag: 1.0.0
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,6 +34,8 @@ screenshot-1.png: Picture of the full radar.
 screenshot-2.png: Picture of the radar after selecting a quadrant.
 
 == Changelog ==
+V1.1.3
+- Fix bug with empty array counting as false.
 V1.1.2
 - Improve data sanitation and escaping.
 V1.1.1

@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Tech Radar
-Version: 1.1.2
+Version: 1.1.3
 Plugin URI: t.b.t.
 Author: Milvum, Blue Harvest
 Author URI: https://milvum.com
@@ -240,9 +240,8 @@ function tech_radar_add_item() {
     add_option('tech_radar_items', $items, '', 'no');
   } else {
     array_push($items, array("name" => $name, "x" => $x, "y" => $y));
-    update_option('tech_radar_items', $items, 'no');
   }
-  
+  update_option('tech_radar_items', $items, 'no');  
   echo 'Added '.$name;
 
 	wp_die(); // this is required to terminate immediately and return a proper response
