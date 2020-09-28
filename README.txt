@@ -34,6 +34,8 @@ screenshot-1.png: Picture of the full radar.
 screenshot-2.png: Picture of the radar after selecting a quadrant.
 
 == Changelog ==
+V1.1.2
+- Improve data sanitation and escaping.
 V1.1.1
 - Improve naming of functions as per the wordpress.org guidelines.
 V1.1.0

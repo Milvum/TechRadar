@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Tech Radar
-Version: 1.1.1
+Version: 1.1.2
 Plugin URI: t.b.t.
 Author: Milvum, Blue Harvest
 Author URI: https://milvum.com
@@ -24,13 +24,19 @@ function techradar_scripts()
 
 function tech_radar_validate($input)
 {
-    return $input;
+  foreach($input as $item) {
+    $item['name'] = sanitize_text_field($item['name']);
+    $item['x'] = intval(sanitize_key($item['x']));
+    $item['y'] = intval(sanitize_key($item['y']));
+  }
+  return $input;
 }
 
 // Init plugin options to white list our options
 function tech_radar_init()
 {
   register_setting('tech_radar_options', 'tech_radar_items', 'tech_radar_validate');
+
 }
 
 // Add settings page
@@ -65,24 +71,21 @@ function tech_radar_do_page()
         <span/>
       </div>
   <?php
-  function tech_radar_compare_name($a, $b)
-  {
-    return strnatcmp($a['name'], $b['name']);
-  }
   $items = get_option('tech_radar_items');
-  usort($items, 'tech_radar_compare_name');
-  foreach($items as $item) {
-    $name = $item['name'];
-    $x = $item['x'];
-    $y = $item['y'];
-    ?>
-    <div class='tr' data-name='<?php echo $name; ?>' data-x='<?php echo $x; ?>' data-y='<?php echo $y; ?>'>
-      <span class='td'><?php echo $name; ?></span>
-      <span class='td'><input class='coordinate' type="number" data-dir='x' value=<?php echo $x; ?>></input></span>
-      <span class='td'><input class='coordinate' type="number" data-dir='y' value=<?php echo $y; ?>></input></span>
-      <button class='remove-button' data-name='<?php echo $name; ?>'>X</button>
-    </div>
-    <?php
+  if($items) {
+    foreach($items as $key=>$item) {
+      $name = esc_attr($item['name']);
+      $x = esc_attr($item['x']);
+      $y = esc_attr($item['y']);
+      ?>
+      <div class='tr' data-index='<?php echo esc_attr($key); ?>' data-x='<?php echo $x; ?>' data-y='<?php echo $y; ?>'>
+        <span class='td'><?php echo $name; ?></span>
+        <span class='td'><input class='coordinate' type="number" data-dir='x' value=<?php echo $x; ?>></input></span>
+        <span class='td'><input class='coordinate' type="number" data-dir='y' value=<?php echo $y; ?>></input></span>
+        <button class='remove-button' data-index='<?php echo esc_attr($key); ?>'>X</button>
+      </div>
+      <?php
+    }
   }
   ?>
   <div class='tr spacing'></div>
@@ -141,12 +144,11 @@ function tech_radar_get_sector($sectors, $x, $y) {
 // Helper function to draw the items in the radar.
 function tech_radar_add_items($sectors) {
   $items = get_option('tech_radar_items');
-
   $out = '<div class="items">';
   foreach($items as $item) {
-    $x = $item['x'];
-    $y = $item['y'];
-    $name = $item['name'];
+    $x = esc_attr($item['x']);
+    $y = esc_attr($item['y']);
+    $name = esc_attr($item['name']);
     $sector = tech_radar_get_sector($sectors, $x, $y);
     $out .= "<div class='Item is-$sector' style='left: $x%; top: $y%'>
           <div class='hit'></div>
@@ -188,15 +190,13 @@ add_shortcode('techradar', 'techradar_display');
 add_action( 'wp_ajax_tech_radar_remove_item', 'tech_radar_remove_item' );
 
 function tech_radar_remove_item() {
-	global $wpdb;
-  $name = $_POST['name'];
-  
+  global $wpdb;
+  $key = sanitize_key($_POST['index']);
   $items = get_option('tech_radar_items');
   if ($items) {
-    $key = array_search($name, array_column($items, 'name'));
     array_splice($items, $key, 1);
     update_option('tech_radar_items', $items, 'no');
-    echo 'Removed '.$name.' at position '.$key.'.';
+    echo 'Removed item at position '.$key.'.';
   }
 
 	wp_die(); // this is required to terminate immediately and return a proper response
@@ -210,10 +210,10 @@ function tech_radar_remove_item_javascript() {
 	<script type="text/javascript" >
 	jQuery(document).on('click', 'button.remove-button', function($) {
     
-    var name = jQuery(this).data('name');
+    var index = jQuery(this).data('index');
 		var data = {
 			'action': 'tech_radar_remove_item',
-			'name': name,
+			'index': index,
 		};
 
 		// since 2.8 ajaxurl is always defined in the admin header and points to admin-ajax.php
@@ -230,9 +230,9 @@ add_action( 'wp_ajax_tech_radar_add_item', 'tech_radar_add_item' );
 
 function tech_radar_add_item() {
 	global $wpdb;
-  $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-  $x = filter_var($_POST['x'], FILTER_SANITIZE_NUMBER_FLOAT);
-  $y = filter_var($_POST['y'], FILTER_SANITIZE_NUMBER_FLOAT);
+  $name = sanitize_text_field($_POST['name']);
+  $x = intval(sanitize_key($_POST['x']));
+  $y = intval(sanitize_key($_POST['y']));
   $items = get_option('tech_radar_items');
   if (!$items) {
     $items = array();
@@ -277,18 +277,17 @@ add_action( 'wp_ajax_tech_radar_update_item', 'tech_radar_update_item' );
 
 function tech_radar_update_item() {
 	global $wpdb;
-  $name = filter_var($_POST['name'], FILTER_SANITIZE_STRING);
-  $x = filter_var($_POST['x'], FILTER_SANITIZE_NUMBER_FLOAT);
-  $y = filter_var($_POST['y'], FILTER_SANITIZE_NUMBER_FLOAT);
+  $key = intval(sanitize_key($_POST['index']));
+  $x = intval(sanitize_key($_POST['x']));
+  $y = intval(sanitize_key($_POST['y']));
   $items = get_option('tech_radar_items');
   if (!$items) {
     return;
   } 
-  $key = array_search($name, array_column($items, 'name'));
-  $items[$key] = array("name" => $name, "x" => $x, "y" => $y);
+  $items[$key] = array("name" => $items[$key]['name'], "x" => $x, "y" => $y);
   update_option('tech_radar_items', $items, 'no');
   
-  echo 'Updated '.$name;
+  echo 'Updated item at '.$key;
   
 	wp_die(); // this is required to terminate immediately and return a proper response
 }
