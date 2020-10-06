@@ -1,7 +1,7 @@
 <?php
 /*
 Plugin Name: Tech Radar
-Version: 1.1.4
+Version: 1.1.6
 Plugin URI: t.b.t.
 Author: Milvum, Blue Harvest
 Author URI: https://milvum.com
@@ -304,7 +304,7 @@ function tech_radar_update_item_javascript() {
     data[dir] = parseInt(value);
 		var data = {
 			'action': 'tech_radar_update_item',
-      'name': data['name'],
+      'index': data['index'],
       'x': data['x'],
       'y': data['y'],
 		};
